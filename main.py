@@ -58,7 +58,7 @@ class KeywordQueryEventListener(EventListener):
             # temperature = float(extension.preferences['temperature'])
             # top_p = float(extension.preferences['top_p'])
             system_prompt = extension.preferences['system_prompt']
-            # line_wrap = int(extension.preferences['line_wrap'])
+            line_wrap = int(extension.preferences['line_wrap'])
             # model = extension.preferences['model']
         # pylint: disable=broad-except
         except Exception as err:
@@ -150,7 +150,7 @@ class KeywordQueryEventListener(EventListener):
         try:
             for choice in choices:
                 message = choice['message']['content']
-                # message = wrap_text(message, line_wrap)
+                message = wrap_text(message, line_wrap)
 
                 items.append(ExtensionResultItem(icon=EXTENSION_ICON, name="Assistant", description=message,
                                                  on_enter=CopyToClipboardAction(message)))
