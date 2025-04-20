@@ -150,7 +150,7 @@ class KeywordQueryEventListener(EventListener):
         try:
             for choice in choices:
                 message = choice['message']['content']
-                message = wrap_text(message, line_wrap)
+                # message = wrap_text(message, line_wrap)
 
                 items.append(ExtensionResultItem(icon=EXTENSION_ICON, name="Assistant", description=message,
                                                  on_enter=CopyToClipboardAction(message)))
