@@ -55,7 +55,7 @@ class KeywordQueryEventListener(EventListener):
             # frequency_penalty = float(
             #     extension.preferences['frequency_penalty'])
             # presence_penalty = float(extension.preferences['presence_penalty'])
-            temperature = float(extension.preferences['temperature'])
+            # temperature = float(extension.preferences['temperature'])
             # top_p = float(extension.preferences['top_p'])
             system_prompt = extension.preferences['system_prompt']
             # line_wrap = int(extension.preferences['line_wrap'])
