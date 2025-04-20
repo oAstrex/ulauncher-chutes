@@ -27,14 +27,14 @@ def wrap_text(text, max_w):
     return '\n'.join(lines)
 
 
-class GPTExtension(Extension):
+class AskExtension(Extension):
     """
-    Ulauncher extension to generate text using GPT-3
+    Ulauncher extension to generate text using OpenRouter
     """
 
     def __init__(self):
-        super(GPTExtension, self).__init__()
-        logger.info('GPT-3 extension started')
+        super(AskExtension, self).__init__()
+        logger.info('OpenRouter Ask extension started')
         self.subscribe(KeywordQueryEvent, KeywordQueryEventListener())
 
 
@@ -44,21 +44,22 @@ class KeywordQueryEventListener(EventListener):
     """
 
     def on_event(self, event, extension):
-        endpoint = "https://api.openai.com/v1/chat/completions"
+        endpoint = "https://openrouter.ai/api/v1/chat/completions"
 
         logger.info('Processing user preferences')
         # Get user preferences
         try:
             api_key = extension.preferences['api_key']
-            max_tokens = int(extension.preferences['max_tokens'])
-            frequency_penalty = float(
-                extension.preferences['frequency_penalty'])
-            presence_penalty = float(extension.preferences['presence_penalty'])
-            temperature = float(extension.preferences['temperature'])
-            top_p = float(extension.preferences['top_p'])
-            system_prompt = extension.preferences['system_prompt']
-            line_wrap = int(extension.preferences['line_wrap'])
             model = extension.preferences['model']
+            # max_tokens = int(extension.preferences['max_tokens'])
+            # frequency_penalty = float(
+            #     extension.preferences['frequency_penalty'])
+            # presence_penalty = float(extension.preferences['presence_penalty'])
+            temperature = float(extension.preferences['temperature'])
+            # top_p = float(extension.preferences['top_p'])
+            system_prompt = extension.preferences['system_prompt']
+            # line_wrap = int(extension.preferences['line_wrap'])
+            # model = extension.preferences['model']
         # pylint: disable=broad-except
         except Exception as err:
             logger.error('Failed to parse preferences: %s', str(err))
@@ -82,12 +83,13 @@ class KeywordQueryEventListener(EventListener):
             ])
 
         # Create POST request
+        #
         headers = {
-            'content-type': 'application/json',
             'Authorization': 'Bearer ' + api_key
         }
 
-        body = {
+        data=json.dumps({
+            "model": model, # Optional
             "messages": [
                 {
                     "role": "system",
@@ -98,23 +100,16 @@ class KeywordQueryEventListener(EventListener):
                     "content": search_term
                 }
             ],
-            "temperature": temperature,
-            "max_tokens": max_tokens,
-            "top_p": top_p,
-            "frequency_penalty": frequency_penalty,
-            "presence_penalty": presence_penalty,
-            "model": model,
-        }
-        body = json.dumps(body)
+        })
 
-        logger.info('Request body: %s', str(body))
+        logger.info('Request body: %s', str(data))
         logger.info('Request headers: %s', str(headers))
 
         # Send POST request
         try:
             logger.info('Sending request')
             response = requests.post(
-                endpoint, headers=headers, data=body, timeout=10)
+                endpoint, headers=headers, data=data, timeout=10)
         # pylint: disable=broad-except
         except Exception as err:
             logger.error('Request failed: %s', str(err))
@@ -180,4 +175,4 @@ class KeywordQueryEventListener(EventListener):
 
 
 if __name__ == '__main__':
-    GPTExtension().run()
+    AskExtension().run()

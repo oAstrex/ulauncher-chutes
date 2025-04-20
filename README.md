@@ -1,12 +1,6 @@
-# [ULauncher](https://ulauncher.io/) Chat GPT Extension
+# [ULauncher](https://ulauncher.io/) Ask Extension
 
-> Disclaimer: Not affiliated with OpenAI
-
-This extension enables you to use ChatGPT custom system prompts to create your own custom assistant
-
-![Screen shot](images/screenshot.png)
-
-Feel free to fork for a more domain specific assistant
+This extension enables you to use any of OpenRouter's LLMs with a custom prompt to create your own custom assistant.
 
 ## Install
 
