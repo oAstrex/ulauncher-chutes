@@ -26,14 +26,14 @@
       "type": "input",
       "name": "OpenRouter chat completion model",
       "description": "For model names see https://openrouter.ai/models",
-      "default_value": "deepseek/deepseek-chat:free"
+      "default_value": "mistralai/mistral-7b-instruct:free"
     },
     {
       "id": "system_prompt",
       "type": "input",
       "name": "System Prompt",
       "description": "A prompt to give some context to the system. This is optional but highly recommended.",
-      "default_value": "Convert natural language instructions into Linux commands. You have been programmed to understand a wide set of commands Linux related commands. You should only answer with the best and most relevant linux command, no descriptions or context, just return the command, do not use 'new lines'"
+      "default_value": "Shortest possible neutral response to carve into stone tablet. Very terse with essentials only."
     },
     {
       "id": "line_wrap",
