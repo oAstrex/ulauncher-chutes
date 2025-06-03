@@ -48,5 +48,6 @@
       "name": "Max Tokens",
       "description": "How long you want the model's response to be. Lower recommended.",
       "default_value": "128"
+    }
   ]
 }
