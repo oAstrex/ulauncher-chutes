@@ -48,6 +48,7 @@ class KeywordQueryEventListener(EventListener):
         logger.info('Processing user preferences')
         try:
             api_key = extension.preferences['api_key']
+            max_tokens = int(extension.preferences['max_tokens'])
             model = extension.preferences['model']
             system_prompt = extension.preferences['system_prompt']
             line_wrap = int(extension.preferences['line_wrap'])
@@ -71,18 +72,26 @@ class KeywordQueryEventListener(EventListener):
             ])
 
         headers = {
-            'Authorization': 'Bearer ' + api_key,
-            'Content-Type': 'application/json'
+            'content-type': 'application/json',
+            'Authorization': 'Bearer ' + api_key
         }
-        logger.debug(f"Request headers: {headers}")
 
-        data = json.dumps({
-            "model": model,
+        body = {
             "messages": [
-                {"role": "system", "content": system_prompt},
-                {"role": "user", "content": search_term}
-            ]
-        })
+                {
+                    "role": "system",
+                    "content": system_prompt
+                },
+                {
+                    "role": "user",
+                    "content": search_term
+                }
+            ],
+            "temperature": temperature,
+            "max_tokens": max_tokens,
+            "model": model,
+        }
+        body = json.dumps(body)
         logger.debug(f"Request data: {data}")
 
         try:
