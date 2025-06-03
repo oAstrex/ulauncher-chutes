@@ -10,4 +10,4 @@ This extension enables you to use any of OpenRouter's LLMs with a custom prompt 
 - Click on **Add extension**
 - Paste this repository's URL
 
-Forked from [ulauncher-gpt](https://github.com/seofernando25/ulauncher-gpt)
+Forked from [ulauncher-ask](https://github.com/up-the-hill/ulauncher-ask)
