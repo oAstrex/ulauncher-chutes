@@ -72,11 +72,10 @@ class KeywordQueryEventListener(EventListener):
             ])
 
         headers = {
-            'content-type': 'application/json',
-            'Authorization': 'Bearer ' + api_key
-        }
+                    'Authorization': 'Bearer ' + api_key
+                }
 
-        body = {
+        data=json.dumps({
             "messages": [
                 {
                     "role": "system",
@@ -87,12 +86,13 @@ class KeywordQueryEventListener(EventListener):
                     "content": search_term
                 }
             ],
-            "temperature": temperature,
-            "max_tokens": max_tokens,
             "model": model,
-        }
-        body = json.dumps(body)
-        logger.debug(f"Request data: {data}")
+            "max_tokens": max_tokens,
+            "temperature": 0.8,
+        })
+
+        logger.info('Request body: %s', str(data))
+        logger.info('Request headers: %s', str(headers))
 
         try:
             logger.debug(f"Sending POST request to {endpoint}")
