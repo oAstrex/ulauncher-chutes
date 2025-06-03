@@ -13,6 +13,7 @@ logger = logging.getLogger(__name__)
 EXTENSION_ICON = 'images/icon.png'
 
 def wrap_text(text, max_w):
+    logger.debug(f"Wrapping text to max width {max_w}")
     words = text.split()
     lines = []
     current_line = ''
@@ -23,8 +24,8 @@ def wrap_text(text, max_w):
             lines.append(current_line.strip())
             current_line = word
     lines.append(current_line.strip())
+    logger.debug(f"Wrapped text: {lines}")
     return '\n'.join(lines)
-
 
 class AskExtension(Extension):
     """
@@ -35,13 +36,13 @@ class AskExtension(Extension):
         logger.info('Chutes AI Ask extension started')
         self.subscribe(KeywordQueryEvent, KeywordQueryEventListener())
 
-
 class KeywordQueryEventListener(EventListener):
     """
     Event listener for KeywordQueryEvent
     """
 
     def on_event(self, event, extension):
+        logger.debug("Entered on_event handler.")
         endpoint = "https://llm.chutes.ai/v1/chat/completions"
 
         logger.info('Processing user preferences')
@@ -50,8 +51,9 @@ class KeywordQueryEventListener(EventListener):
             model = extension.preferences['model']
             system_prompt = extension.preferences['system_prompt']
             line_wrap = int(extension.preferences['line_wrap'])
+            logger.debug(f"Preferences - api_key: {api_key}, model: {model}, system_prompt: {system_prompt}, line_wrap: {line_wrap}")
         except Exception as err:
-            logger.error('Failed to parse preferences: %s', str(err))
+            logger.error('Failed to parse preferences: %s', str(err), exc_info=True)
             return RenderResultListAction([
                 ExtensionResultItem(icon=EXTENSION_ICON,
                                     name='Failed to parse preferences: ' + str(err),
@@ -61,6 +63,7 @@ class KeywordQueryEventListener(EventListener):
         search_term = event.get_argument()
         logger.info('The search term is: %s', search_term)
         if not search_term:
+            logger.debug("No search term provided.")
             return RenderResultListAction([
                 ExtensionResultItem(icon=EXTENSION_ICON,
                                     name='Type in a prompt...',
@@ -71,6 +74,7 @@ class KeywordQueryEventListener(EventListener):
             'Authorization': 'Bearer ' + api_key,
             'Content-Type': 'application/json'
         }
+        logger.debug(f"Request headers: {headers}")
 
         data = json.dumps({
             "model": model,
@@ -79,11 +83,15 @@ class KeywordQueryEventListener(EventListener):
                 {"role": "user", "content": search_term}
             ]
         })
+        logger.debug(f"Request data: {data}")
 
         try:
+            logger.debug(f"Sending POST request to {endpoint}")
             response = requests.post(endpoint, headers=headers, data=data, timeout=10)
+            logger.debug(f"Response status code: {response.status_code}")
+            logger.debug(f"Raw response text: {response.text}")
         except Exception as err:
-            logger.error('Request failed: %s', str(err))
+            logger.error('Request failed: %s', str(err), exc_info=True)
             return RenderResultListAction([
                 ExtensionResultItem(icon=EXTENSION_ICON,
                                     name='Request failed: ' + str(err),
@@ -91,14 +99,16 @@ class KeywordQueryEventListener(EventListener):
             ])
 
         try:
-            response = response.json()
-            choices = response['choices']
+            response_json = response.json()
+            logger.debug(f"Response JSON: {response_json}")
+            choices = response_json['choices']
         except Exception as err:
-            logger.error('Failed to parse response: %s', str(response))
+            logger.error('Failed to parse response: %s', str(response), exc_info=True)
             errMsg = "Unknown error, please check logs for more info"
             try:
-                errMsg = response['error']['message']
+                errMsg = response_json['error']['message']
             except Exception:
+                logger.debug("No detailed error message found in response JSON.")
                 pass
 
             return RenderResultListAction([
@@ -109,22 +119,25 @@ class KeywordQueryEventListener(EventListener):
 
         items = []
         try:
-            for choice in choices:
+            for idx, choice in enumerate(choices):
+                logger.debug(f"Parsing choice {idx}: {choice}")
                 message = choice['message']['content']
                 message = wrap_text(message, line_wrap)
 
                 items.append(ExtensionResultItem(icon=EXTENSION_ICON, name="Chutes AI", description=message,
                                                  on_enter=CopyToClipboardAction(message)))
+            logger.debug(f"Created {len(items)} ExtensionResultItems.")
         except Exception as err:
-            logger.error('Failed to parse choices: %s', str(response))
+            logger.error('Failed to parse choices: %s', str(response_json), exc_info=True)
             return RenderResultListAction([
                 ExtensionResultItem(icon=EXTENSION_ICON,
                                     name='Failed to parse choices: ' + str(err),
                                     on_enter=CopyToClipboardAction(str(err)))
             ])
 
+        logger.debug("Returning results to Ulauncher.")
         return RenderResultListAction(items)
 
-
 if __name__ == '__main__':
+    logger.debug("Starting AskExtension main entrypoint.")
     AskExtension().run()
