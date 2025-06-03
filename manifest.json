@@ -1,8 +1,8 @@
 {
   "required_api_version": "^2.0.0",
-  "name": "OpenRouter Ask",
-  "description": "Create a domain specific assistant using OpenRouter",
-  "developer_name": "up-the-hill",
+  "name": "Chutes AI ask",
+  "description": "Create a domain specific assistant using Chutes instead of OpenRouter",
+  "developer_name": "astrex@zaetrix",
   "icon": "images/icon.png",
   "options": {
     "query_debounce": 1
@@ -17,16 +17,16 @@
     {
       "id": "api_key",
       "type": "input",
-      "name": "OpenRouter API Key",
-      "description": "You can get one at https://openrouter.ai/settings/keys",
+      "name": "Chutes API Key",
+      "description": "You can get one at https://chutes.ai/app/api",
       "default_value": ""
     },
     {
       "id": "model",
       "type": "input",
       "name": "OpenRouter chat completion model",
-      "description": "For model names see https://openrouter.ai/models",
-      "default_value": "mistralai/mistral-7b-instruct:free"
+      "description": "For model names see https://chutes.ai/app, navigate to the model you want to use, click API and use the model name given.",
+      "default_value": "chutesai/Llama-4-Scout-17B-16E-Instruct"
     },
     {
       "id": "system_prompt",
