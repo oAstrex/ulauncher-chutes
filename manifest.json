@@ -41,6 +41,12 @@
       "name": "Line Length",
       "description": "The maximum number of characters per line.",
       "default_value": "64"
-    }
+    },
+    {
+      "id": "max_tokens",
+      "type": "input",
+      "name": "Max Tokens",
+      "description": "How long you want the model's response to be. Lower recommended.",
+      "default_value": "128"
   ]
 }
